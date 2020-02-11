@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:text="@string/txt_horario"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_toStartOf="@id/checkbox"
+        android:id="@+id/txtHorario"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/txt_modo"
+        android:id="@+id/txtModo"
+        android:layout_below="@id/txtHorario"
+
+        android:layout_toStartOf="@id/checkbox"
+        android:layout_marginTop="5dp"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/checkbox"
+        android:text=""
+        android:visibility="gone"
+        />
+
+</RelativeLayout>
