@@ -1,6 +1,7 @@
 package br.com.luansilveira.audiomanager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     Switch swAtivado;
     View layoutPrincipal;
     ListView listViewHorarios;
+    FloatingActionButton btAdicionar;
 
     private Dao<Horario, ?> daoHorario;
     private List<Horario> listHorarios = new ArrayList<>();
@@ -43,14 +45,14 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> startActivityForResult(new Intent(this, HorarioActivity.class), REQUEST_HORARIO));
-
         layoutPrincipal = findViewById(R.id.layoutPrincipal);
         txtSemHorario = findViewById(R.id.txtSemHorario);
         swAtivado = findViewById(R.id.swAtivado);
         listViewHorarios = findViewById(R.id.listViewHorarios);
         listViewHorarios.setMultiChoiceModeListener(this);
+
+        btAdicionar = findViewById(R.id.btAdicionar);
+        btAdicionar.setOnClickListener(view -> startActivityForResult(new Intent(this, HorarioActivity.class), REQUEST_HORARIO));
 
         try {
             this.daoHorario = DB.get(this).getDao(Horario.class);
@@ -65,9 +67,34 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             });
 
             mostrarLista();
+
+            this.ativarHorarios(this.isManagerAtivado());
+            swAtivado.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                this.ativarHorarios(isChecked);
+                this.setPrefsAtivarManager(isChecked);
+            });
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private SharedPreferences getPrefs() {
+        return this.getSharedPreferences("prefs", MODE_PRIVATE);
+    }
+
+    private void setPrefsAtivarManager(boolean ativar) {
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+        editor.putBoolean("ativar", ativar).apply();
+    }
+
+    private boolean isManagerAtivado() {
+        return this.getPrefs().getBoolean("ativar", false);
+    }
+
+    private void ativarHorarios(boolean ativar) {
+        listViewHorarios.setEnabled(ativar);
+        btAdicionar.setVisibility(ativar ? View.VISIBLE : View.GONE);
+        btAdicionar.setEnabled(ativar);
     }
 
     private void excluirHorarios(ActionMode mode, List<Horario> horarios) {

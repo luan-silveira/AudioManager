@@ -30,6 +30,7 @@ public class HorarioActivity extends AppCompatActivity {
     CheckBox ckVibrar;
 
     private Horario horario;
+    private boolean editar = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class HorarioActivity extends AppCompatActivity {
             this.timePickerFinal.setMinute(horaFinal.getMinuto());
             this.ckVibrar.setChecked(horario.getModo() == Horario.MODO_VIBRAR);
             setTitle("Editar horário modo silencioso");
+            editar = true;
         } else {
             this.timePickerFinal.setHour(DateCalendar.now().addHours(12).getHour());
             setTitle("Novo horário modo silencioso");
@@ -79,17 +81,22 @@ public class HorarioActivity extends AppCompatActivity {
         int modo = ckVibrar.isChecked() ? Horario.MODO_VIBRAR : Horario.MODO_SILENCIOSO;
 
         try {
-            if (this.horario == null) this.horario = new Horario();
-            this.horario.setMinutoInicial(horaInicial.getTotalMinutos()).setMinutoFinal(horaFinal.getTotalMinutos())
-                    .setModo(modo);
             Dao<Horario, ?> dao = DB.get(this).getDao(Horario.class);
-            if (this.hasHorarioConcorrente(dao, horario)) {
-                new AlertDialog.Builder(this).setTitle("Horário concorrente").setMessage("Já há um horário cadastrado dentro do período atual!")
-                        .setPositiveButton("OK", null).show();
-                return;
-            }
-            dao.createOrUpdate(horario);
 
+            if (editar) {
+                HorarioManager.cancelarAgendamentoHorario(this, this.horario);
+                this.horario.setHoraInicial(horaInicial).setHoraFinal(horaFinal).setModo(modo);
+                dao.update(this.horario);
+            } else {
+                this.horario = new Horario(horaInicial, horaFinal, modo);
+                if (this.hasHorarioConcorrente(dao, horario)) {
+                    new AlertDialog.Builder(this).setTitle("Horário concorrente").setMessage("Já há um horário cadastrado dentro do período atual!")
+                            .setPositiveButton("OK", null).show();
+                    return;
+                }
+            }
+
+            HorarioManager.agendarHorario(this, horario);
             Toast.makeText(this, "Horário salvo", Toast.LENGTH_LONG).show();
             setResult(RESULT_OK);
             finish();
@@ -102,6 +109,7 @@ public class HorarioActivity extends AppCompatActivity {
 
         List<Horario> horarios = dao.queryForAll();
         for (Horario h : horarios) {
+            if (h.getId() == horario.getId()) continue;
             if (h.getMinutoInicial() < horario.getMinutoFinalReal() ||
                     h.getMinutoFinalReal() > horario.getMinutoInicial()) return true;
         }

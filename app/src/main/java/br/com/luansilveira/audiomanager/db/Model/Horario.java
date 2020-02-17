@@ -32,8 +32,8 @@ public class Horario implements Serializable {
     }
 
     public Horario(Hora horaInicial, Hora horaFinal, int modo) {
-        this.minutoInicial = horaInicial.getTotalMinutos();
-        this.minutoFinal = horaFinal.getTotalMinutos();
+        this.setHoraInicial(horaInicial);
+        this.setHoraFinal(horaFinal);
         this.modo = modo;
     }
 
@@ -66,6 +66,16 @@ public class Horario implements Serializable {
 
     public Horario setMinutoFinal(int minutoFinal) {
         this.minutoFinal = minutoFinal;
+        return this;
+    }
+
+    public Horario setHoraInicial(Hora horaInicial) {
+        this.minutoInicial = horaInicial.getTotalMinutos();
+        return this;
+    }
+
+    public Horario setHoraFinal(Hora horaFinal) {
+        this.minutoFinal = horaFinal.getTotalMinutos();
         return this;
     }
 
