@@ -1,82 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HorarioActivity"
-    android:padding="10dp">
+    android:padding="10dp"
+    tools:context=".HorarioActivity">
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hora inicial:"
-        android:id="@+id/labelInicial"
-        android:textColor="#333333"
-        />
+        android:layout_height="match_parent"
+        android:layout_above="@id/btSalvar">
 
-    <TimePicker
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/timePickerInicial"
-        android:layout_below="@id/labelInicial"
-        android:timePickerMode="spinner" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hora inicial:"
-        android:id="@+id/labelFinal"
-        android:layout_below="@id/timePickerInicial"
-        android:textColor="#333333"
-        />
+            <TextView
+                android:id="@+id/labelInicial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hora inicial:"
+                android:textColor="#333333" />
 
-    <TimePicker
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/labelFinal"
-        android:id="@+id/timePickerFinal"
-        android:timePickerMode="spinner" />
+            <TimePicker
+                android:id="@+id/timePickerInicial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/labelInicial"
+                android:timePickerMode="spinner" />
 
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Modo vibratório"
-        android:layout_below="@id/timePickerFinal"
-        android:id="@+id/ckVibrar"
-        android:layout_marginTop="5dp"/>
+            <TextView
+                android:id="@+id/labelFinal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/timePickerInicial"
+                android:text="Hora Final:"
+                android:textColor="#333333" />
+
+            <TimePicker
+                android:id="@+id/timePickerFinal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/labelFinal"
+                android:timePickerMode="spinner" />
+
+            <CheckBox
+                android:id="@+id/ckVibrar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/timePickerFinal"
+                android:layout_marginTop="5dp"
+                android:text="Modo vibratório" />
+
+
+        </RelativeLayout>
+
+    </ScrollView>
 
     <Button
+        android:id="@+id/btCancelar"
+        style="@android:style/Widget.Material.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="Cancelar"
-        android:id="@+id/btCancelar"
-        android:layout_toStartOf="@id/separador"
-        style="@android:style/Widget.Material.Button.Borderless"
         android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/separador"
         android:onClick="btCancelarClick"
+        android:text="Cancelar"
         android:textColor="?attr/colorAccent" />
 
     <View
+        android:id="@+id/separador"
         android:layout_width="1dp"
         android:layout_height="40dp"
-        android:visibility="invisible"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:id="@+id/separador" />
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible" />
 
     <Button
+        android:id="@+id/btSalvar"
+        style="@android:style/Widget.Material.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="Salvar"
-        android:id="@+id/btSalvar"
-        android:layout_toEndOf="@id/separador"
-        style="@android:style/Widget.Material.Button.Borderless"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/separador"
         android:onClick="btSalvarClick"
+        android:text="Salvar"
         android:textColor="?attr/colorAccent" />
 
 </RelativeLayout>

@@ -1,6 +1,5 @@
 package br.com.luansilveira.audiomanager.db.Model;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -34,7 +33,7 @@ public class Horario implements Serializable {
 
     public Horario(Hora horaInicial, Hora horaFinal, int modo) {
         this.minutoInicial = horaInicial.getTotalMinutos();
-        this.minutoFinal= horaFinal.getTotalMinutos();
+        this.minutoFinal = horaFinal.getTotalMinutos();
         this.modo = modo;
     }
 
@@ -60,6 +59,11 @@ public class Horario implements Serializable {
         return minutoFinal;
     }
 
+    public int getMinutoFinalReal() {
+        if (this.minutoFinal < this.minutoInicial) return this.minutoFinal + 1440;
+        return this.minutoFinal;
+    }
+
     public Horario setMinutoFinal(int minutoFinal) {
         this.minutoFinal = minutoFinal;
         return this;
@@ -69,7 +73,7 @@ public class Horario implements Serializable {
         return new Hora(this.minutoInicial);
     }
 
-    public Hora getHoraFinal(){
+    public Hora getHoraFinal() {
         return new Hora(this.minutoFinal);
     }
 
@@ -81,4 +85,5 @@ public class Horario implements Serializable {
         this.modo = modo;
         return this;
     }
+
 }

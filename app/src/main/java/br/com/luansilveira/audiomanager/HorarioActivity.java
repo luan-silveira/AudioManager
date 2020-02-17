@@ -1,10 +1,12 @@
 package br.com.luansilveira.audiomanager;
 
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -13,9 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import br.com.luansilveira.audiomanager.db.DB;
 import br.com.luansilveira.audiomanager.db.Model.Horario;
+import br.com.luansilveira.audiomanager.utils.DateCalendar;
 
 public class HorarioActivity extends AppCompatActivity {
 
@@ -40,6 +44,9 @@ public class HorarioActivity extends AppCompatActivity {
 
         timePickerInicial = findViewById(R.id.timePickerInicial);
         timePickerFinal = findViewById(R.id.timePickerFinal);
+        boolean is24Hour = DateFormat.is24HourFormat(this);
+        timePickerInicial.setIs24HourView(is24Hour);
+        timePickerFinal.setIs24HourView(is24Hour);
         ckVibrar = findViewById(R.id.ckVibrar);
 
         this.horario = (Horario) getIntent().getSerializableExtra(EXTRA_HORARIO);
@@ -52,7 +59,10 @@ public class HorarioActivity extends AppCompatActivity {
             this.timePickerFinal.setMinute(horaFinal.getMinuto());
             this.ckVibrar.setChecked(horario.getModo() == Horario.MODO_VIBRAR);
             setTitle("Editar horário modo silencioso");
-        } else setTitle("Novo horário modo silencioso");
+        } else {
+            this.timePickerFinal.setHour(DateCalendar.now().addHours(12).getHour());
+            setTitle("Novo horário modo silencioso");
+        }
     }
 
     @Override
@@ -69,7 +79,9 @@ public class HorarioActivity extends AppCompatActivity {
         int modo = ckVibrar.isChecked() ? Horario.MODO_VIBRAR : Horario.MODO_SILENCIOSO;
 
         try {
-            this.horario = new Horario(horaInicial, horaFinal, modo);
+            if (this.horario == null) this.horario = new Horario();
+            this.horario.setMinutoInicial(horaInicial.getTotalMinutos()).setMinutoFinal(horaFinal.getTotalMinutos())
+                    .setModo(modo);
             Dao<Horario, ?> dao = DB.get(this).getDao(Horario.class);
             if (this.hasHorarioConcorrente(dao, horario)) {
                 new AlertDialog.Builder(this).setTitle("Horário concorrente").setMessage("Já há um horário cadastrado dentro do período atual!")
@@ -77,14 +89,23 @@ public class HorarioActivity extends AppCompatActivity {
                 return;
             }
             dao.createOrUpdate(horario);
+
+            Toast.makeText(this, "Horário salvo", Toast.LENGTH_LONG).show();
+            setResult(RESULT_OK);
+            finish();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     private boolean hasHorarioConcorrente(Dao<Horario, ?> dao, Horario horario) throws SQLException {
-        return dao.countOf(dao.queryBuilder().where().lt("horaInicial", horario.getHoraFinal())
-                .and().gt("horaFinal", horario.getHoraInicial()).prepare()) > 0;
+
+        List<Horario> horarios = dao.queryForAll();
+        for (Horario h : horarios) {
+            if (h.getMinutoInicial() < horario.getMinutoFinalReal() ||
+                    h.getMinutoFinalReal() > horario.getMinutoInicial()) return true;
+        }
+        return false;
     }
 
     public void btCancelarClick(View view) {

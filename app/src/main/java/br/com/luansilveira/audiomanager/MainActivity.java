@@ -2,24 +2,21 @@ package br.com.luansilveira.audiomanager;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.j256.ormlite.dao.Dao;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.view.ActionMode;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,9 +25,9 @@ import java.util.List;
 import br.com.luansilveira.audiomanager.db.DB;
 import br.com.luansilveira.audiomanager.db.Model.Horario;
 
-public class MainActivity extends AppCompatActivity implements AbsListView.MultiChoiceModeListener{
+public class MainActivity extends AppCompatActivity implements AbsListView.MultiChoiceModeListener {
 
-    private static final int REQUEST_HORARIO = -1;
+    private static final int REQUEST_HORARIO = 6;
 
     TextView txtSemHorario;
     Switch swAtivado;
@@ -45,8 +42,6 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> startActivityForResult(new Intent(this, HorarioActivity.class), REQUEST_HORARIO));
@@ -75,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         }
     }
 
-    private void excluirHorarios(ActionMode mode, List<Horario> horarios){
+    private void excluirHorarios(ActionMode mode, List<Horario> horarios) {
         new AlertDialog.Builder(this).setTitle("Excluir")
                 .setMessage("Deseja excluir os horários selecionados?")
                 .setPositiveButton("Sim", (dialog, which) -> {
@@ -97,14 +92,14 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         if (resultCode == RESULT_OK) atualizarLista();
     }
 
-    private void mostrarLista(){
+    private void mostrarLista() {
         boolean mostrar = this.listHorarios.size() > 0;
         this.layoutPrincipal.setVisibility(mostrar ? View.VISIBLE : View.GONE);
         this.txtSemHorario.setVisibility(!mostrar ? View.VISIBLE : View.GONE);
     }
 
     private void atualizarLista() {
-            try {
+        try {
             List<Horario> list = daoHorario.queryForAll();
             this.listHorarios.clear();
             this.listHorarios.addAll(list);
@@ -149,4 +144,6 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         int count = adapter.getCountSelected();
         mode.setTitle(count + " selecionado" + (count > 1 ? "s" : ""));
     }
+
+
 }

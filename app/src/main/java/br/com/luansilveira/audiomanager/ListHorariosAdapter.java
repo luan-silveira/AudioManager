@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.luansilveira.audiomanager.db.Model.Horario;
@@ -19,10 +20,11 @@ public class ListHorariosAdapter extends ArrayAdapter<Horario> {
 
     private boolean[] selection;
     private boolean actionMode;
-    private List<Horario> listSelect;
+    private List<Horario> listSelect = new ArrayList<>();
 
     public ListHorariosAdapter(@NonNull Context context, @NonNull List<Horario> lista) {
         super(context, 0, lista);
+        resetSelection();
     }
 
     public void resetSelection() {
