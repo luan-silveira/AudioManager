@@ -16,8 +16,8 @@ public abstract class HorarioManager {
 
     public static void agendarHorario(Context context, Horario horario, boolean cancelar) {
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pendingIntentInicial = PendingIntent.getBroadcast(context, horario.getId(), new Intent(context, HorarioReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent pendingIntentFinal = PendingIntent.getBroadcast(context, horario.getId(), new Intent(context, HorarioReceiver.class).putExtra("final", true), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntentInicial = PendingIntent.getBroadcast(context, horario.getId(), new Intent(context, HorarioReceiver.class).putExtra(HorarioReceiver.EXTRA_MODO, horario.getModo()), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntentFinal = PendingIntent.getBroadcast(context, horario.getId(), new Intent(context, HorarioReceiver.class).putExtra(HorarioReceiver.EXTRA_FINAL, true), PendingIntent.FLAG_UPDATE_CURRENT);
         if (cancelar) {
             manager.cancel(pendingIntentInicial);
             manager.cancel(pendingIntentFinal);
