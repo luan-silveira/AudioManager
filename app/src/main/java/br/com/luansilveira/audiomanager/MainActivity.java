@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             swAtivado.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 this.ativarHorarios(isChecked);
                 this.setPrefsAtivarManager(isChecked);
+                HorarioManager.agendarOuCancelarHorarios(this, this.listHorarios, !isChecked);
             });
         } catch (SQLException e) {
             e.printStackTrace();

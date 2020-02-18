@@ -4,11 +4,43 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+
+import java.util.List;
 
 import br.com.luansilveira.audiomanager.db.Model.Horario;
 import br.com.luansilveira.audiomanager.utils.DateCalendar;
 
-public abstract class HorarioManager {
+public class HorarioManager {
+
+    private Context context;
+
+    private HorarioManager(Context context) {
+        this.context = context;
+    }
+
+    public static HorarioManager from(Context context) {
+        return new HorarioManager(context);
+    }
+
+    public static void agendarOuCancelarHorarios(Context context, List<Horario> horarios, boolean cancelar) {
+        for (Horario h : horarios) {
+            HorarioManager.agendarHorario(context, h, cancelar);
+        }
+    }
+
+    public static void agendarHorarios(Context context, List<Horario> horarios) {
+        agendarOuCancelarHorarios(context, horarios, false);
+    }
+
+    private SharedPreferences getPrefs() {
+        return context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+    }
+
+    private void setPrefsAtivarManager(boolean ativar) {
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+        editor.putBoolean("ativar", ativar).apply();
+    }
 
     public static void agendarHorario(Context context, Horario horario) {
         agendarHorario(context, horario, false);
@@ -37,6 +69,14 @@ public abstract class HorarioManager {
 
     public static void cancelarAgendamentoHorario(Context context, Horario horario) {
         agendarHorario(context, horario, true);
+    }
+
+    public boolean isManagerAtivado() {
+        return this.getPrefs().getBoolean("ativar", false);
+    }
+
+    public void ativarHorarioManager(boolean ativar) {
+        this.setPrefsAtivarManager(ativar);
     }
 
 }
