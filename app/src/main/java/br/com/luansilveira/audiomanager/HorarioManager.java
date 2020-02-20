@@ -54,8 +54,8 @@ public class HorarioManager {
 
     public static void agendarHorario(Context context, Horario horario, boolean cancelar) {
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pendingIntentInicial = PendingIntent.getBroadcast(context, 1, new Intent(context, HorarioReceiver.class).putExtra(HorarioReceiver.EXTRA_MODO, horario.getModo()), 0);
-        PendingIntent pendingIntentFinal = PendingIntent.getBroadcast(context, 2, new Intent(context, HorarioReceiver.class).putExtra(HorarioReceiver.EXTRA_FINAL, true), 0);
+        PendingIntent pendingIntentInicial = PendingIntent.getBroadcast(context, 1, new Intent(context, HorarioReceiver.class).putExtra(HorarioReceiver.EXTRA_MODO, horario.getModo()), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntentFinal = PendingIntent.getBroadcast(context, 2, new Intent(context, HorarioReceiver.class).putExtra(HorarioReceiver.EXTRA_FINAL, true), PendingIntent.FLAG_UPDATE_CURRENT);
         Hora horaInicial = horario.getHoraInicial();
         Hora horaFinal = horario.getHoraFinal();
 
