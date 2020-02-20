@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                 this.setPrefsAtivarManager(isChecked);
                 HorarioManager.agendarOuCancelarHorarios(this, this.listHorarios, !isChecked);
             });
+
+            swAtivado.setChecked(this.isManagerAtivado());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -93,9 +95,10 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     }
 
     private void ativarHorarios(boolean ativar) {
+        boolean listaVazia = this.listHorarios.size() == 0;
         listViewHorarios.setEnabled(ativar);
-        btAdicionar.setVisibility(ativar ? View.VISIBLE : View.GONE);
-        btAdicionar.setEnabled(ativar);
+        btAdicionar.setVisibility((ativar || listaVazia) ? View.VISIBLE : View.GONE);
+        btAdicionar.setEnabled(ativar || listaVazia);
     }
 
     private void excluirHorarios(ActionMode mode, List<Horario> horarios) {
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                 .setMessage("Deseja excluir os horários selecionados?")
                 .setPositiveButton("Sim", (dialog, which) -> {
                     try {
+                        HorarioManager.cancelarHorarios(MainActivity.this, horarios);
                         if (this.daoHorario.delete(horarios) > 0) {
                             mode.finish();
                             atualizarLista();

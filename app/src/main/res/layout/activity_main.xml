@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:text="Nenhum horário incluído. \nToque no botão (+) para adcionar"
+        android:text="Nenhum horário incluído. \nToque no botão (+) para adicionar"
         android:textAlignment="center"
         android:textSize="15sp" />
 

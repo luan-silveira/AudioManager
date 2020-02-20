@@ -23,6 +23,7 @@
         </receiver>
         <receiver
             android:name=".HorarioReceiver"
+            android:exported="true"
             android:enabled="true" />
 
         <activity android:name=".HorarioActivity" />

@@ -59,11 +59,11 @@ public class HorarioActivity extends AppCompatActivity {
             this.timePickerFinal.setHour(horaFinal.getHora());
             this.timePickerFinal.setMinute(horaFinal.getMinuto());
             this.ckVibrar.setChecked(horario.getModo() == Horario.MODO_VIBRAR);
-            setTitle("Editar horário modo silencioso");
+            setTitle("Editar horário");
             editar = true;
         } else {
             this.timePickerFinal.setHour(DateCalendar.now().addHours(12).getHour());
-            setTitle("Novo horário modo silencioso");
+            setTitle("Novo horário");
         }
     }
 
@@ -94,6 +94,7 @@ public class HorarioActivity extends AppCompatActivity {
                             .setPositiveButton("OK", null).show();
                     return;
                 }
+                dao.create(horario);
             }
 
             HorarioManager.agendarHorario(this, horario);
