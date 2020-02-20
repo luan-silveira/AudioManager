@@ -89,11 +89,11 @@ public class HorarioActivity extends AppCompatActivity {
                 dao.update(this.horario);
             } else {
                 this.horario = new Horario(horaInicial, horaFinal, modo);
-                if (this.hasHorarioConcorrente(dao, horario)) {
-                    new AlertDialog.Builder(this).setTitle("Horário concorrente").setMessage("Já há um horário cadastrado dentro do período atual!")
-                            .setPositiveButton("OK", null).show();
-                    return;
-                }
+//                if (this.hasHorarioConcorrente(dao, horario)) {
+//                    new AlertDialog.Builder(this).setTitle("Horário concorrente").setMessage("Já há um horário cadastrado dentro do período atual!")
+//                            .setPositiveButton("OK", null).show();
+//                    return;
+//                }
                 dao.create(horario);
             }
 
@@ -111,8 +111,8 @@ public class HorarioActivity extends AppCompatActivity {
         List<Horario> horarios = dao.queryForAll();
         for (Horario h : horarios) {
             if (h.getId() == horario.getId()) continue;
-            if (h.getMinutoInicial() < horario.getMinutoFinalReal() ||
-                    h.getMinutoFinalReal() > horario.getMinutoInicial()) return true;
+            if (horario.getMinutoInicial() <= h.getMinutoFinalReal() ||
+                    horario.getMinutoFinalReal() >= h.getMinutoInicial()) return true;
         }
         return false;
     }
