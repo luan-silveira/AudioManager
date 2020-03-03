@@ -24,7 +24,8 @@
         <receiver
             android:name=".HorarioReceiver"
             android:exported="true"
-            android:enabled="true" />
+            android:enabled="true"
+            android:process=":remote"/>
 
         <activity android:name=".HorarioActivity" />
         <activity

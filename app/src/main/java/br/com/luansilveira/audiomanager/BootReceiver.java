@@ -1,5 +1,6 @@
 package br.com.luansilveira.audiomanager;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import br.com.luansilveira.audiomanager.db.DB;
 import br.com.luansilveira.audiomanager.db.Model.Horario;
+import br.com.luansilveira.audiomanager.utils.Notify;
 
 public class BootReceiver extends BroadcastReceiver {
 
@@ -24,6 +26,8 @@ public class BootReceiver extends BroadcastReceiver {
             List<Horario> horarios = dao.queryForAll();
             if (HorarioManager.from(context).isManagerAtivado()) {
                 HorarioManager.agendarHorarios(context, horarios);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                App.mostrarNotificacao(pendingIntent, "AudioManager", "Horários Silencioso/Vibratório reagendados!");
                 Toast.makeText(context, "Horários Silencioso/Vibratório reagendados!", Toast.LENGTH_LONG).show();
             }
         } catch (SQLException e) {

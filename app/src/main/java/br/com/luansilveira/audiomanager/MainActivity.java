@@ -121,7 +121,10 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode != REQUEST_HORARIO) return;
-        if (resultCode == RESULT_OK) atualizarLista();
+        if (resultCode == RESULT_OK) {
+            if (! swAtivado.isChecked()) swAtivado.setChecked(true);
+            atualizarLista();
+        }
     }
 
     private void mostrarLista() {

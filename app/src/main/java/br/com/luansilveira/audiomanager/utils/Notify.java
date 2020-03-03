@@ -1,50 +1,117 @@
 package br.com.luansilveira.audiomanager.utils;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 
-import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+/**
+ * Classe utilizada para implementar notificações no Android.
+ */
 public class Notify {
 
-    public static final String ID_PADRAO_CANAL = "padrao";
-    public static final String DESCRICAO_PADRAO_CANAL = "Padrão";
-
-    private Context context;
-    private Notification.Builder builder;
     private NotificationManager manager;
-    private NotificationChannel channel;
+    private Context context;
 
-    private Notify(Context context) {
-        this(context, (NotificationChannel) null);
+    public Notify(Context context) {
+        this.context = context;
+        this.manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    @SuppressLint("WrongConstant")
-    private Notify(Context context, NotificationChannel channel) {
-        this.context = context;
+    public static Notify from(Context context) {
+        return new Notify(context);
+    }
+
+    /**
+     * Função utilizada para criar uma notificação e mostrá-la na barra de notificações.
+     *
+     * @param contentIntent
+     * @param icon
+     * @param title
+     * @param text
+     */
+    public void criarNotificacao(Intent contentIntent, int icon, CharSequence title, CharSequence text) {
+        this.criarNotificacao(contentIntent, icon, title, text, null);
+    }
+
+    public void criarNotificacao(Intent contentIntent, int icon, CharSequence title, CharSequence text, String id_canal) {
+        this.criarNotificacao(contentIntent, icon, title, text, id_canal, false);
+    }
+
+    public void criarNotificacao(Intent contentIntent, int icon, CharSequence title, CharSequence text, String id_canal, boolean highPriority) {
+        int id = 1;
+        this.criarNotificacao(getPendingIntent(id, contentIntent, context), icon, title, text, id_canal, highPriority);
+    }
+
+    public void criarNotificacao(PendingIntent pendingIntent, int icon, CharSequence title, CharSequence text, String id_canal) {
+        int id = 1;
+        this.criarNotificacao(pendingIntent, icon, title, text, id_canal, false);
+    }
+
+
+    public void criarNotificacao(PendingIntent pendingIntent, int icon, CharSequence title, CharSequence text, String id_canal, boolean highPriority) {
+        int id = 1;
+
+        NotificationCompat.Builder notificacao = null;
+        if (id_canal != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notificacao = new NotificationCompat.Builder(context, id_canal);
+            } else {
+                notificacao = new NotificationCompat.Builder(context);
+            }
+        }
+        notificacao.setSmallIcon(icon);
+        notificacao.setContentTitle(title);
+        notificacao.setContentText(text);
+        notificacao.setContentIntent(pendingIntent);
+        if (highPriority) {
+            notificacao.setPriority(Notification.PRIORITY_MAX);
+            notificacao.setVibrate(new long[]{250, 250});
+        }
+
+        NotificationManagerCompat nm = NotificationManagerCompat.from(context);
+        nm.notify(id, notificacao.build());
+    }
+
+    public NotificationManager getManager() {
+        return manager;
+    }
+
+    private PendingIntent getPendingIntent(int id, Intent intent, Context context) {
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addParentStack(intent.getComponent());
+        stackBuilder.addNextIntent(intent);
+
+        PendingIntent p = stackBuilder.getPendingIntent(id, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        return p;
+    }
+
+    /**
+     * Função utilizada para criar um canal de notificação, obrigatório a partir da versão 8 (Oreo) do Android.
+     *
+     * @param id          String representando o ID do canal
+     * @param nome        Nome do canal
+     * @param importancia Importância do canal. Deve ser uma das constantes da classe {@link NotificationManager}:
+     * @return
+     */
+
+    public NotificationChannel criarCanalNotificacao(String id, CharSequence nome, int importancia) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (channel == null)
-                channel = new NotificationChannel(ID_PADRAO_CANAL, DESCRICAO_PADRAO_CANAL, NotificationManager.IMPORTANCE_DEFAULT);
-            this.channel = channel;
-            this.builder = new Notification.Builder(context, channel.getId());
+            NotificationChannel canal = new NotificationChannel(id, nome, importancia);
+            this.manager.createNotificationChannel(canal);
+
+            return canal;
         } else {
-            this.builder = new Notification.Builder(context);
+            return null;
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private Notify(Context context, String idCanal) {
-        this.context = context;
-        this.channel = new NotificationChannel(ID_PADRAO_CANAL, DESCRICAO_PADRAO_CANAL, NotificationManager.IMPORTANCE_DEFAULT);
-        this.builder = new Notification.Builder(context, channel.getId());
-
-    }
-
-    private static Notify from(Context context) {
-        return new Notify(context);
-    }
 }
